@@ -2,6 +2,8 @@ from os import path
 
 WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
 
+TILE_SIZE = 64
+
 
 root_path = path.dirname(__file__).replace("\\", "/")
 

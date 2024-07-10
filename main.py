@@ -1,7 +1,9 @@
 import pygame, sys
 from settings import *
 from scripts.player import Player
+from scripts.sprite import Sprite
 from pygame.math import Vector2 as Vec2
+from pytmx.util_pygame import load_pygame
 
 
 # Camera - replace vanilla draw method with a custom one so that camera follows player
@@ -23,7 +25,7 @@ class AllSprites(pygame.sprite.Group):
         # Blit surf
         self.screen.blit(self.background, -self.offset)
 
-        for sprite in self.sprites():
+        for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
             offset_rect = sprite.image.get_rect(center=sprite.rect.center)
             offset_rect.center -= self.offset
             self.screen.blit(
@@ -45,7 +47,21 @@ class Game:
         self.setup()
 
     def setup(self):
-        self.player = Player((200, 200), self.all_sprites, PATHS["player"], None)
+        tmx_data = load_pygame(root_path + "/data/western-saga-map.tmx")
+        # Fence
+        for x, y, surf in tmx_data.get_layer_by_name("fence").tiles():
+            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+
+        # Objects
+        for obj in tmx_data.get_layer_by_name("object"):
+            Sprite((obj.x, obj.y), obj.image, self.all_sprites)
+
+        # Entities
+        for obj in tmx_data.get_layer_by_name("entity"):
+            if obj.name == "player":
+                self.player = Player(
+                    (obj.x, obj.y), self.all_sprites, PATHS["player"], None
+                )
 
     def run(self):
         while True:

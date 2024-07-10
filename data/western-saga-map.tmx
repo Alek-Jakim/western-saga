@@ -163,7 +163,7 @@
   <object id="40" gid="400" x="1408" y="768" width="160" height="156"/>
   <object id="41" gid="397" x="2432" y="576" width="60" height="112"/>
  </objectgroup>
- <objectgroup id="4" name="Entities">
+ <objectgroup id="4" name="entity">
   <object id="32" name="player" x="2048" y="3328">
    <point/>
   </object>

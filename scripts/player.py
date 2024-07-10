@@ -31,7 +31,6 @@ class Player(pygame.sprite.Sprite):
 
     def import_assets(self, path):
         self.animations = {}
-        # print(root_path + path)
         for index, folder in enumerate(walk(path)):
             if index == 0:
                 for name in folder[1]:
@@ -114,5 +113,3 @@ class Player(pygame.sprite.Sprite):
         self.get_status()
         self.move(dt)
         self.animate(dt)
-
-        print(self.status)
