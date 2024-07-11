@@ -2,6 +2,7 @@ import pygame, sys
 from settings import *
 from scripts.player import Player
 from scripts.sprite import Sprite
+from scripts.bullet import Bullet
 from pygame.math import Vector2 as Vec2
 from pytmx.util_pygame import load_pygame
 
@@ -41,11 +42,20 @@ class Game:
         pygame.display.set_caption("Western Saga")
         self.clock = pygame.time.Clock()
 
+        # loading assets takes time, if I load bullet each time it is created it will drop performance
+        self.bullet_surf = pygame.image.load(
+            root_path + "/graphics/other/particle.png"
+        ).convert_alpha()
+
         # groups
         self.all_sprites = AllSprites()
         self.obstacles = pygame.sprite.Group()
+        self.bullets = pygame.sprite.Group()
 
         self.setup()
+
+    def create_bullet(self, pos, dir):
+        Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
 
     def setup(self):
         tmx_data = load_pygame(root_path + "/data/western-saga-map.tmx")
@@ -64,7 +74,11 @@ class Game:
             if obj.name == "player":
                 # Player gets reference to obstacles but doesn't belong to the group itself
                 self.player = Player(
-                    (obj.x, obj.y), self.all_sprites, PATHS["player"], self.obstacles
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS["player"],
+                    collision_sprites=self.obstacles,
+                    create_bullet=self.create_bullet,
                 )
 
     def run(self):

@@ -5,7 +5,7 @@ from os import walk
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, groups, path, collision_sprites):
+    def __init__(self, pos, groups, path, collision_sprites, create_bullet):
         super().__init__(groups)
 
         self.import_assets(path)
@@ -28,6 +28,9 @@ class Player(pygame.sprite.Sprite):
         self.collision_sprites = collision_sprites
 
         self.is_attacking = False
+        self.is_bullet_fired = False
+        self.create_bullet = create_bullet
+        self.bullet_dir = Vec2()
 
     def import_assets(self, path):
         self.animations = {}
@@ -79,6 +82,21 @@ class Player(pygame.sprite.Sprite):
 
         self.frame_index += self.frame_speed * dt
 
+        # shoot bullet
+        if (
+            int(self.frame_index) == 2
+            and self.is_attacking
+            and not self.is_bullet_fired
+        ):
+
+            # give bullet offset so it starts next to player
+            bul_start_pos = self.rect.center + self.bullet_dir * 80
+            self.create_bullet(
+                bul_start_pos,
+                self.bullet_dir,
+            )
+            self.is_bullet_fired = True
+
         if self.frame_index >= len(current_animation):
             self.frame_index = 0
             if self.is_attacking:
@@ -108,10 +126,21 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.dir.y = 0
 
-        if keys[pygame.K_SPACE]:
-            self.is_attacking = True
-            self.dir = Vec2()
-            self.frame_index = 0
+            if keys[pygame.K_SPACE]:
+                self.is_attacking = True
+                self.dir = Vec2()
+                self.frame_index = 0
+                self.is_bullet_fired = False
+
+                match self.status.split("_")[0]:
+                    case "left":
+                        self.bullet_dir = Vec2(-1, 0)
+                    case "right":
+                        self.bullet_dir = Vec2(1, 0)
+                    case "up":
+                        self.bullet_dir = Vec2(0, -1)
+                    case "down":
+                        self.bullet_dir = Vec2(0, 1)
 
     def move(self, dt):
 
