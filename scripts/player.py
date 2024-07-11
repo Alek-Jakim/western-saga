@@ -10,7 +10,7 @@ class Player(pygame.sprite.Sprite):
 
         self.import_assets(path)
 
-        self.status = "down_idle"
+        self.status = "down"
         self.frame_index = 0
         self.frame_speed = 10
 
@@ -21,10 +21,10 @@ class Player(pygame.sprite.Sprite):
         self.pos = Vec2(self.rect.center)
         self.dir = Vec2()
 
-        self.speed = 200
+        self.speed = 250
 
         # collisions
-        self.hitbox = self.rect.inflate(0, -self.rect.height / 2)
+        self.hitbox = self.rect.inflate(-self.rect.width * 0.5, -self.rect.height / 2)
         self.collision_sprites = collision_sprites
 
         self.is_attacking = False
@@ -54,6 +54,25 @@ class Player(pygame.sprite.Sprite):
 
         if self.is_attacking:
             self.status = self.status.split("_")[0] + "_attack"
+
+    def collision(self, direction):
+        for sprite in self.collision_sprites.sprites():
+            if sprite.hitbox.colliderect(self.hitbox):
+                if direction == "horizontal":
+                    if self.dir.x > 0:  # moving right
+                        self.hitbox.right = sprite.hitbox.left
+                    if self.dir.x < 0:  # moving left
+                        self.hitbox.left = sprite.hitbox.right
+                    self.rect.centerx = self.hitbox.centerx
+                    self.pos.x = self.hitbox.centerx
+
+                else:  # vertical
+                    if self.dir.y > 0:  # moving down
+                        self.hitbox.bottom = sprite.hitbox.top
+                    if self.dir.y < 0:  # moving up
+                        self.hitbox.top = sprite.hitbox.bottom
+                    self.rect.centery = self.hitbox.centery
+                    self.pos.y = self.hitbox.centery
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -100,13 +119,15 @@ class Player(pygame.sprite.Sprite):
         if self.dir.magnitude() != 0:
             self.dir = self.dir.normalize()
 
-        self.pos.x += self.dir.x * dt * self.speed
+        self.pos.x += self.dir.x * self.speed * dt
         self.hitbox.centerx = round(self.pos.x)
-        self.rect.x = self.hitbox.centerx
+        self.rect.centerx = self.hitbox.centerx
+        self.collision("horizontal")
 
-        self.pos.y += self.dir.y * dt * self.speed
+        self.pos.y += self.dir.y * self.speed * dt
         self.hitbox.centery = round(self.pos.y)
-        self.rect.y = self.hitbox.centery
+        self.rect.centery = self.hitbox.centery
+        self.collision("vertical")
 
     def update(self, dt):
         self.keyboard_input()

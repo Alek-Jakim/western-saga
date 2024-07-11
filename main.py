@@ -43,6 +43,7 @@ class Game:
 
         # groups
         self.all_sprites = AllSprites()
+        self.obstacles = pygame.sprite.Group()
 
         self.setup()
 
@@ -50,17 +51,20 @@ class Game:
         tmx_data = load_pygame(root_path + "/data/western-saga-map.tmx")
         # Fence
         for x, y, surf in tmx_data.get_layer_by_name("fence").tiles():
-            Sprite((x * TILE_SIZE, y * TILE_SIZE), surf, self.all_sprites)
+            Sprite(
+                (x * TILE_SIZE, y * TILE_SIZE), surf, [self.all_sprites, self.obstacles]
+            )
 
         # Objects
         for obj in tmx_data.get_layer_by_name("object"):
-            Sprite((obj.x, obj.y), obj.image, self.all_sprites)
+            Sprite((obj.x, obj.y), obj.image, [self.all_sprites, self.obstacles])
 
         # Entities
         for obj in tmx_data.get_layer_by_name("entity"):
             if obj.name == "player":
+                # Player gets reference to obstacles but doesn't belong to the group itself
                 self.player = Player(
-                    (obj.x, obj.y), self.all_sprites, PATHS["player"], None
+                    (obj.x, obj.y), self.all_sprites, PATHS["player"], self.obstacles
                 )
 
     def run(self):
