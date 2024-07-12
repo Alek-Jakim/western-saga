@@ -3,6 +3,7 @@ from settings import *
 from scripts.player import Player
 from scripts.sprite import Sprite
 from scripts.bullet import Bullet
+from scripts.enemy import Coffin
 from pygame.math import Vector2 as Vec2
 from pytmx.util_pygame import load_pygame
 
@@ -79,6 +80,24 @@ class Game:
                     path=PATHS["player"],
                     collision_sprites=self.obstacles,
                     create_bullet=self.create_bullet,
+                )
+
+            if obj.name == "coffin":
+                # Player gets reference to obstacles but doesn't belong to the group itself
+                Coffin(
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS["coffin"],
+                    collision_sprites=self.obstacles,
+                )
+
+            if obj.name == "cactus":
+                # Player gets reference to obstacles but doesn't belong to the group itself
+                Coffin(
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS["cactus"],
+                    collision_sprites=self.obstacles,
                 )
 
     def run(self):
