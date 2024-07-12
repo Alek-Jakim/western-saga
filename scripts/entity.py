@@ -27,6 +27,24 @@ class Entity(pygame.sprite.Sprite):
 
         self.is_attacking = False
 
+        self.health = 3
+        self.is_vulnerable = True
+        self.hit_time = 0
+
+    def take_damage(self):
+        if self.is_vulnerable:
+            if self.health != 0:
+                self.health -= 1
+                self.is_vulnerable = False
+                self.hit_time = pygame.time.get_ticks()
+
+    def vulnerability_timer(self):
+        if not self.is_vulnerable:
+            current_time = pygame.time.get_ticks()
+
+            if current_time - self.hit_time > 400:
+                self.is_vulnerable = True
+
     def import_assets(self, path):
         self.animations = {}
         for index, folder in enumerate(walk(path)):
