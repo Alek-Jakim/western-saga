@@ -1,5 +1,6 @@
 from scripts.entity import Entity
 from pygame.math import Vector2 as Vec2
+import pygame
 
 
 class Enemy:
@@ -80,6 +81,7 @@ class Coffin(Entity, Enemy):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, dt):
         self.face_player()
@@ -87,6 +89,7 @@ class Coffin(Entity, Enemy):
         self.attack()
         self.move(dt)
         self.animate(dt)
+        self.blink()
         self.vulnerability_timer()
         self.check_death()
 
@@ -140,6 +143,7 @@ class Cactus(Entity, Enemy):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update(self, dt):
         self.face_player()
@@ -147,5 +151,6 @@ class Cactus(Entity, Enemy):
         self.attack()
         self.move(dt)
         self.animate(dt)
+        self.blink()
         self.vulnerability_timer()
         self.check_death()

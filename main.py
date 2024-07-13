@@ -61,11 +61,15 @@ class Game:
 
         # buildings and objects
         for obstacle in self.obstacles.sprites():
-            pygame.sprite.spritecollide(obstacle, self.bullets, True)
+            pygame.sprite.spritecollide(
+                obstacle, self.bullets, True, pygame.sprite.collide_mask
+            )
 
         # enemies
         for bullet in self.bullets.sprites():
-            sprites = pygame.sprite.spritecollide(bullet, self.enemies, False)
+            sprites = pygame.sprite.spritecollide(
+                bullet, self.enemies, False, pygame.sprite.collide_mask
+            )
 
             if sprites:
                 bullet.kill()
@@ -73,7 +77,9 @@ class Game:
                     sprite.take_damage()
 
         # player
-        if pygame.sprite.spritecollide(self.player, self.bullets, True):
+        if pygame.sprite.spritecollide(
+            self.player, self.bullets, True, pygame.sprite.collide_mask
+        ):
             self.player.take_damage()
 
     def create_bullet(self, pos, dir):

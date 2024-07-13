@@ -8,7 +8,7 @@ class Player(Entity):
     def __init__(self, pos, groups, path, collision_sprites, create_bullet):
         super().__init__(pos, groups, path, collision_sprites)
 
-        self.speed = 800
+        self.speed = 400
 
         self.is_bullet_fired = False
         self.create_bullet = create_bullet
@@ -48,6 +48,7 @@ class Player(Entity):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def keyboard_input(self):
         keys = pygame.key.get_pressed()
@@ -92,5 +93,6 @@ class Player(Entity):
         self.get_status()
         self.move(dt)
         self.animate(dt)
+        self.blink()
         self.vulnerability_timer()
         self.check_death()
