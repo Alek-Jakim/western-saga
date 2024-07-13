@@ -53,7 +53,7 @@ class Coffin(Entity, Enemy):
         self.player = player
         self.notice_radius = 550
         self.walk_radius = 400
-        self.attack_radius = 50
+        self.attack_radius = 100
 
     def attack(self):
         distance = self.get_player_distance_dir()[0]
@@ -87,21 +87,52 @@ class Coffin(Entity, Enemy):
         self.attack()
         self.move(dt)
         self.animate(dt)
+        self.vulnerability_timer()
+        self.check_death()
 
 
 class Cactus(Entity, Enemy):
-    def __init__(self, pos, groups, path, collision_sprites, player):
+    def __init__(self, pos, groups, path, collision_sprites, player, create_bullet):
         super().__init__(pos, groups, path, collision_sprites)
         self.player = player
 
         self.notice_radius = 600
         self.walk_radius = 500
-        self.attack_radius = 100
+        self.attack_radius = 300
+
+        self.is_bullet_fired = False
+        self.create_bullet = create_bullet
+        self.bullet_dir = Vec2()
+
+    def attack(self):
+        distance = self.get_player_distance_dir()[0]
+        if distance < self.attack_radius and not self.is_attacking:
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_bullet_fired = False
+
+        if self.is_attacking:
+            self.status = self.status.split("_")[0] + "_attack"
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
 
         self.frame_index += self.frame_speed * dt
+
+        # shoot bullet
+        if (
+            int(self.frame_index) == 8
+            and self.is_attacking
+            and not self.is_bullet_fired
+        ):
+
+            direction = self.get_player_distance_dir()[1]
+            position = self.rect.center + direction * 80
+            self.create_bullet(
+                position,
+                direction,
+            )
+            self.is_bullet_fired = True
 
         if self.frame_index >= len(current_animation):
             self.frame_index = 0
@@ -113,5 +144,8 @@ class Cactus(Entity, Enemy):
     def update(self, dt):
         self.face_player()
         self.walk_to_player()
+        self.attack()
         self.move(dt)
         self.animate(dt)
+        self.vulnerability_timer()
+        self.check_death()

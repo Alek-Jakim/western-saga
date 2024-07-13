@@ -93,4 +93,4 @@ class Player(Entity):
         self.move(dt)
         self.animate(dt)
         self.vulnerability_timer()
-        print(self.health)
+        self.check_death()

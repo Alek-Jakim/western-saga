@@ -3,7 +3,7 @@ from settings import *
 from scripts.player import Player
 from scripts.sprite import Sprite
 from scripts.bullet import Bullet
-from scripts.enemy import Coffin
+from scripts.enemy import Coffin, Cactus
 from pygame.math import Vector2 as Vec2
 from pytmx.util_pygame import load_pygame
 
@@ -44,6 +44,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # loading assets takes time, if I load bullet each time it is created it will drop performance
+        # so, I load it once here and then pass the create_bullet function to player
         self.bullet_surf = pygame.image.load(
             root_path + "/graphics/other/particle.png"
         ).convert_alpha()
@@ -52,8 +53,28 @@ class Game:
         self.all_sprites = AllSprites()
         self.obstacles = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         self.setup()
+
+    def bullet_collision(self):
+
+        # buildings and objects
+        for obstacle in self.obstacles.sprites():
+            pygame.sprite.spritecollide(obstacle, self.bullets, True)
+
+        # enemies
+        for bullet in self.bullets.sprites():
+            sprites = pygame.sprite.spritecollide(bullet, self.enemies, False)
+
+            if sprites:
+                bullet.kill()
+                for sprite in sprites:
+                    sprite.take_damage()
+
+        # player
+        if pygame.sprite.spritecollide(self.player, self.bullets, True):
+            self.player.take_damage()
 
     def create_bullet(self, pos, dir):
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
@@ -86,7 +107,7 @@ class Game:
                 # Player gets reference to obstacles but doesn't belong to the group itself
                 Coffin(
                     pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.enemies],
                     path=PATHS["coffin"],
                     collision_sprites=self.obstacles,
                     player=self.player,
@@ -94,12 +115,13 @@ class Game:
 
             if obj.name == "cactus":
                 # Player gets reference to obstacles but doesn't belong to the group itself
-                Coffin(
+                Cactus(
                     pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.enemies],
                     path=PATHS["cactus"],
                     collision_sprites=self.obstacles,
                     player=self.player,
+                    create_bullet=self.create_bullet,
                 )
 
     def run(self):
@@ -112,6 +134,7 @@ class Game:
             dt = self.clock.tick() / 1000
 
             self.all_sprites.update(dt)
+            self.bullet_collision()
 
             self.screen.fill("black")
 
