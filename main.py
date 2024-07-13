@@ -57,6 +57,13 @@ class Game:
 
         self.setup()
 
+        self.music = pygame.mixer.Sound(root_path + "/sound/music.mp3")
+
+        self.bullet_sound = pygame.mixer.Sound(root_path + "/sound/bullet.wav")
+        self.hit_sound = pygame.mixer.Sound(root_path + "/sound/hit.mp3")
+
+        self.music.play(loops=-1)
+
     def bullet_collision(self):
 
         # buildings and objects
@@ -73,6 +80,7 @@ class Game:
 
             if sprites:
                 bullet.kill()
+                self.hit_sound.play()
                 for sprite in sprites:
                     sprite.take_damage()
 
@@ -81,8 +89,11 @@ class Game:
             self.player, self.bullets, True, pygame.sprite.collide_mask
         ):
             self.player.take_damage()
+            bullet.kill()
+            self.hit_sound.play()
 
     def create_bullet(self, pos, dir):
+        self.bullet_sound.play()
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
 
     def setup(self):
