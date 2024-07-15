@@ -1,4 +1,4 @@
-from scripts.game_state_manager import Scene
+from scripts.state_manager import Scene
 import pygame
 from settings import *
 import sys
@@ -126,6 +126,7 @@ class Menu(Scene):
             else:
                 self.quit_btn = self.button_states["quit"]
 
+            # Click event
             if self.new_game_btn_rect.collidepoint(mouse_pos):
                 if self.clicked:
                     # START GAME
@@ -144,7 +145,5 @@ class Menu(Scene):
                     sys.exit()
 
             self.clicked = False
-
-            print(self.game_state_manager.get_state())
 
             pygame.display.update()

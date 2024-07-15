@@ -1,4 +1,4 @@
-from scripts.game_state_manager import Scene
+from scripts.state_manager import Scene
 import pygame
 import sys
 

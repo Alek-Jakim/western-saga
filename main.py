@@ -1,6 +1,6 @@
 import pygame, sys
 from settings import *
-from scripts.game_state_manager import *
+from scripts.state_manager import *
 
 
 # Scenes
@@ -15,7 +15,7 @@ class Game:
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Western Saga")
 
-        self.game_state_manager = GameStateManager("menu")
+        self.game_state_manager = StateManager("menu")
 
         self.clock = pygame.time.Clock()
 

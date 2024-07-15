@@ -7,7 +7,7 @@ class Scene:
         pass
 
 
-class GameStateManager:
+class StateManager:
     def __init__(self, current_state):
         self.current_state = current_state
 
@@ -16,3 +16,11 @@ class GameStateManager:
 
     def set_state(self, state):
         self.current_state = state
+
+
+class Level(Scene):
+    def __init__(self, screen, state_manager):
+        super().__init__(screen, game_state_manager=state_manager)
+
+    def run(self):
+        pass
