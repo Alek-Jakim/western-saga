@@ -40,9 +40,6 @@ class Main(Scene):
     def __init__(self, screen, game_state_manager):
         super().__init__(screen, game_state_manager)
 
-        # loading assets takes time, if I load bullet each time it is created it will drop performance
-        # so, I load it once here and then pass the create_bullet function to player
-
         self.clock = pygame.time.Clock()
 
         # Groups
@@ -58,10 +55,11 @@ class Main(Scene):
             "enemy_group": self.enemy_group,
         }
 
-        # Levels
-        self.level_state_manager = StateManager("level_one")
-
-        self.level_one = LevelOne(self.screen, self.level_state_manager, self.groups)
+        self.level_one = LevelOne(
+            self.screen,
+            game_state_manager,
+            self.groups,
+        )
 
         self.levels = {"level_one": self.level_one}
 
@@ -77,26 +75,11 @@ class Main(Scene):
                     pygame.quit()
                     sys.exit()
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.game_state_manager.set_state("menu")
-                        running = False
-                        self.reset_game()
+            current_level = self.game_state_manager.get_level()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.clicked = True
-
-            self.levels[self.level_state_manager.get_state()].run()
-
-            dt = self.clock.tick(60) / 1000
-
-            self.all_sprites_group.update(dt)
-            self.bullet_collision()
-
-            self.screen.fill("black")
-
-            self.all_sprites_group.custom_draw(self.player)
-
-            self.clicked = False
+            if current_level:
+                self.levels[self.game_state_manager.get_level()].run()
+            else:
+                running = False
 
             pygame.display.update()

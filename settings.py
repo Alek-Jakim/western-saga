@@ -12,6 +12,7 @@ PATHS = {
     "player": root_path + "/graphics/player",
     "coffin": root_path + "/graphics/enemy/coffin",
     "cactus": root_path + "/graphics/enemy/cactus",
+    "stranger": root_path + "/graphics/npc/stranger",
 }
 
 

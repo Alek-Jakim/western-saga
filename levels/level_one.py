@@ -3,10 +3,9 @@ import pygame
 import sys
 from settings import *
 
-from pygame.math import Vector2 as Vec2
 from pytmx.util_pygame import load_pygame
 
-
+from scripts.npc import NPC
 from scripts.player import Player
 from scripts.sprite import Sprite
 from scripts.bullet import Bullet
@@ -14,10 +13,12 @@ from scripts.enemy import Coffin, Cactus
 
 
 class LevelOne(Level):
-    def __init__(self, screen, state_manager, groups):
-        super().__init__(screen, state_manager)
+    def __init__(self, screen, game_state_manager, groups):
+        super().__init__(screen, game_state_manager)
 
         self.groups = groups
+
+        self.game_state_manager = game_state_manager
 
         self.bullet_surf = pygame.image.load(
             root_path + "/graphics/other/particle.png"
@@ -67,13 +68,11 @@ class LevelOne(Level):
             [self.groups["all_sprites_group"], self.groups["bullet_group"]],
         )
 
-    def reset_game(self):
+    def empty_groups(self):
         self.groups["all_sprites_group"].empty()
         self.groups["enemy_group"].empty()
         self.groups["obstacle_group"].empty()
         self.groups["bullet_group"].empty()
-
-        self.setup()
 
     def setup(self):
         tmx_data = load_pygame(root_path + "/data/western-saga-map.tmx")
@@ -132,6 +131,15 @@ class LevelOne(Level):
                     create_bullet=self.create_bullet,
                 )
 
+            if obj.name == "stranger":
+                # Player gets reference to obstacles but doesn't belong to the group itself
+                NPC(
+                    pos=(obj.x, obj.y),
+                    groups=self.groups["all_sprites_group"],
+                    path=PATHS["stranger"],
+                    collision_sprites=self.groups["obstacle_group"],
+                )
+
     def run(self):
         running = True
 
@@ -143,9 +151,11 @@ class LevelOne(Level):
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        self.game_state_manager.set_state("menu")
+                        self.game_state_manager.set_level(None)
+                        self.game_state_manager.set_scene("menu")
+                        self.empty_groups()
+                        self.setup()
                         running = False
-                        self.reset_game()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.clicked = True

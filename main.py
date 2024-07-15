@@ -15,7 +15,7 @@ class Game:
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Western Saga")
 
-        self.game_state_manager = StateManager("menu")
+        self.game_state_manager = GameStateManager("menu")
 
         self.clock = pygame.time.Clock()
 
@@ -39,7 +39,7 @@ class Game:
 
             self.clock.tick(60)
 
-            self.game_states[self.game_state_manager.get_state()].run()
+            self.game_states[self.game_state_manager.get_scene()].run()
 
             pygame.display.update()
 

@@ -7,20 +7,27 @@ class Scene:
         pass
 
 
-class StateManager:
-    def __init__(self, current_state):
-        self.current_state = current_state
+class GameStateManager:
+    def __init__(self, current_scene, current_level=None):
+        self.current_scene = current_scene
+        self.current_level = current_level
 
-    def get_state(self):
-        return self.current_state
+    def get_scene(self):
+        return self.current_scene
 
-    def set_state(self, state):
-        self.current_state = state
+    def set_scene(self, scene):
+        self.current_scene = scene
+
+    def get_level(self):
+        return self.current_level
+
+    def set_level(self, level):
+        self.current_level = level
 
 
 class Level(Scene):
-    def __init__(self, screen, state_manager):
-        super().__init__(screen, game_state_manager=state_manager)
+    def __init__(self, screen, game_state_manager):
+        super().__init__(screen, game_state_manager)
 
     def run(self):
         pass

@@ -9,7 +9,7 @@ class Entity(pygame.sprite.Sprite):
         super().__init__(groups)
         self.import_assets(path)
 
-        self.status = "down"
+        self.status = "down_idle"
         self.frame_index = 0
         self.frame_speed = 10
 

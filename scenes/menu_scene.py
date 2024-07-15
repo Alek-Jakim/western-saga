@@ -130,13 +130,14 @@ class Menu(Scene):
             if self.new_game_btn_rect.collidepoint(mouse_pos):
                 if self.clicked:
                     # START GAME
-                    self.game_state_manager.set_state("main")
+                    self.game_state_manager.set_level("level_one")
+                    self.game_state_manager.set_scene("main")
                     running = False
 
             if self.controls_btn_rect.collidepoint(mouse_pos):
                 if self.clicked:
                     # START GAME
-                    self.game_state_manager.set_state("controls")
+                    self.game_state_manager.set_scene("controls")
                     running = False
 
             if self.quit_btn_rect.collidepoint(mouse_pos):
