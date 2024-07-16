@@ -15,6 +15,11 @@ PATHS = {
     "stranger": root_path + "/graphics/npc/stranger",
 }
 
+ICON_PATHS = {
+    "stranger": root_path + "/graphics/npc/npc_icons/stranger.png",
+    "close": root_path + "/graphics/npc/npc_icons/close.png",
+}
+
 
 def draw_text(text, font_size, color, surface, pos=(0, 0)):
     font = Font(root_path + "/font/western_font.TTF", font_size)

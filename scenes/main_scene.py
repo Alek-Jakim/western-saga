@@ -47,14 +47,15 @@ class Main(Scene):
         self.obstacle_group = pygame.sprite.Group()
         self.bullet_group = pygame.sprite.Group()
         self.enemy_group = pygame.sprite.Group()
+        self.dialogue_group = pygame.sprite.GroupSingle()
 
         self.groups = {
             "all_sprites_group": self.all_sprites_group,
             "obstacle_group": self.obstacle_group,
             "bullet_group": self.bullet_group,
             "enemy_group": self.enemy_group,
+            "dialogue_group": self.dialogue_group,
         }
-
         self.level_one = LevelOne(
             self.screen,
             game_state_manager,

@@ -73,9 +73,11 @@ class LevelOne(Level):
         self.groups["enemy_group"].empty()
         self.groups["obstacle_group"].empty()
         self.groups["bullet_group"].empty()
+        self.groups["dialogue_group"].empty()
 
     def setup(self):
         tmx_data = load_pygame(root_path + "/data/western-saga-map.tmx")
+
         # Fence
         for x, y, surf in tmx_data.get_layer_by_name("fence").tiles():
             Sprite(
@@ -135,9 +137,18 @@ class LevelOne(Level):
                 # Player gets reference to obstacles but doesn't belong to the group itself
                 NPC(
                     pos=(obj.x, obj.y),
-                    groups=self.groups["all_sprites_group"],
+                    groups=[
+                        self.groups["all_sprites_group"],
+                        self.groups["dialogue_group"],
+                    ],
                     path=PATHS["stranger"],
-                    collision_sprites=self.groups["obstacle_group"],
+                    collision_sprites=[
+                        self.groups["obstacle_group"],
+                        self.groups["all_sprites_group"],
+                    ],
+                    player=self.player,
+                    npc_icon=ICON_PATHS["stranger"],
+                    npc_name="Stranger",
                 )
 
     def run(self):
@@ -157,17 +168,24 @@ class LevelOne(Level):
                         self.setup()
                         running = False
 
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        self.groups["dialogue_group"].empty()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.clicked = True
 
             dt = self.clock.tick(60) / 1000
 
             self.groups["all_sprites_group"].update(dt)
+            self.groups["dialogue_group"].update(dt)
+
             self.bullet_collision()
 
             self.screen.fill("black")
 
             self.groups["all_sprites_group"].custom_draw(self.player)
+            self.groups["dialogue_group"].draw(self.screen)
 
             self.clicked = False
 
